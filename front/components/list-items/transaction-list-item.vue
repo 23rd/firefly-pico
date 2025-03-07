@@ -42,6 +42,9 @@
 
           <div class="third_column">
             <div class="font-weight-700 text-size-16">{{ transactionAmount }} {{ transactionCurrency }}</div>
+            <div v-if="foreignTransactionAmountAndCurrency !== ''">
+              <div class="font-weight-700 text-size-12">{{ foreignTransactionAmountAndCurrency }}</div>
+            </div>
 
             <transaction-list-item-hero-icon v-if="props.isDetailedMode" :value="props.value" />
 
@@ -132,6 +135,19 @@ const visibleTags = computed(() => {
 
 const transactionAmount = computed(() => Transaction.getAmount(props.value))
 const transactionCurrency = computed(() => _.get(firstTransaction.value, 'currency_symbol', ' - '))
+const foreignTransactionAmountAndCurrency = computed(() => {
+  const amount = _.get(firstTransaction.value, 'foreign_amount', '');
+  const currencySymbol = _.get(firstTransaction.value, 'foreign_currency_symbol', '');
+  console.log(amount)
+  console.log(currencySymbol)
+
+  if (!amount || !currencySymbol) {
+    return '';
+  }
+
+  return parseFloat(amount).toFixed(2) + ' ' + currencySymbol;
+});
+
 
 const isTransactionExpense = computed(() => isEqual(transactionType.value, Transaction.types.expense))
 const isTransactionIncome = computed(() => isEqual(transactionType.value, Transaction.types.income))
